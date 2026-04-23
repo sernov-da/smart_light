@@ -1,46 +1,37 @@
 import 'package:flutter/material.dart';
 import '../services/fake_auth_service.dart';
 import 'device_list_screen.dart';
+import 'register_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
-  final _confirmCtrl = TextEditingController();
 
   bool _hidePass = true;
-  bool _hideConfirm = true;
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
-    _confirmCtrl.dispose();
     super.dispose();
-  }
-
-  String? _nameValidator(String? v) {
-    final value = (v ?? '').trim();
-    if (value.isEmpty) return 'Введите имя';
-    if (value.length < 2) return 'Минимум 2 символа';
-    return null;
   }
 
   String? _emailValidator(String? v) {
     final value = (v ?? '').trim();
     if (value.isEmpty) return 'Введите email';
+
     final ok = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
     if (!ok) return 'Некорректный email';
+
     return null;
   }
 
@@ -51,21 +42,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return null;
   }
 
-  String? _confirmValidator(String? v) {
-    final value = v ?? '';
-    if (value.isEmpty) return 'Повторите пароль';
-    if (value != _passCtrl.text) return 'Пароли не совпадают';
-    return null;
-  }
-
-  void _onRegisterTap() {
+  void _onLoginTap() {
     final ok = _formKey.currentState?.validate() ?? false;
     if (!ok) return;
 
     FocusScope.of(context).unfocus();
 
-    final success = FakeAuthService.register(
-      name: _nameCtrl.text,
+    final success = FakeAuthService.login(
       email: _emailCtrl.text,
       password: _passCtrl.text,
     );
@@ -73,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Пользователь с таким email уже существует'),
+          content: Text('Неверный email или пароль'),
         ),
       );
       return;
@@ -87,10 +70,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  void _openRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const RegisterScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Регистрация')),
+      appBar: AppBar(title: const Text('Вход')),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -100,7 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const SizedBox(height: 12),
                 Text(
-                  'Создать аккаунт',
+                  'Войти в аккаунт',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 16),
@@ -109,17 +101,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      TextFormField(
-                        controller: _nameCtrl,
-                        textInputAction: TextInputAction.next,
-                        decoration: const InputDecoration(
-                          labelText: 'Имя',
-                          prefixIcon: Icon(Icons.person_outline),
-                        ),
-                        validator: _nameValidator,
-                      ),
-                      const SizedBox(height: 12),
-
                       TextFormField(
                         controller: _emailCtrl,
                         keyboardType: TextInputType.emailAddress,
@@ -135,12 +116,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         controller: _passCtrl,
                         obscureText: _hidePass,
-                        textInputAction: TextInputAction.next,
+                        textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
                           labelText: 'Пароль',
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
-                            onPressed: () => setState(() => _hidePass = !_hidePass),
+                            onPressed: () {
+                              setState(() => _hidePass = !_hidePass);
+                            },
                             icon: Icon(
                               _hidePass
                                   ? Icons.visibility
@@ -149,27 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         validator: _passValidator,
-                      ),
-                      const SizedBox(height: 12),
-
-                      TextFormField(
-                        controller: _confirmCtrl,
-                        obscureText: _hideConfirm,
-                        textInputAction: TextInputAction.done,
-                        decoration: InputDecoration(
-                          labelText: 'Повторите пароль',
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          suffixIcon: IconButton(
-                            onPressed: () => setState(() => _hideConfirm = !_hideConfirm),
-                            icon: Icon(
-                              _hideConfirm
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                          ),
-                        ),
-                        validator: _confirmValidator,
-                        onFieldSubmitted: (_) => _onRegisterTap(),
+                        onFieldSubmitted: (_) => _onLoginTap(),
                       ),
 
                       const SizedBox(height: 18),
@@ -177,15 +140,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         width: double.infinity,
                         height: 48,
                         child: FilledButton(
-                          onPressed: _onRegisterTap,
-                          child: const Text('Зарегистрироваться'),
+                          onPressed: _onLoginTap,
+                          child: const Text('Войти'),
                         ),
                       ),
 
                       const SizedBox(height: 8),
                       TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Уже есть аккаунт? Войти'),
+                        onPressed: _openRegister,
+                        child: const Text('Нет аккаунта? Зарегистрироваться'),
+                      ),
+
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Тестовый аккаунт:\nemail: test@example.com\nпароль: 123456',
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),

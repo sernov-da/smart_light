@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/device_list_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Light Control',
       theme: ThemeData.dark(),
-      home: const RegisterScreen(), // убрали const
+      home: const LoginScreen(), // убрали const
     );
   }
 }
