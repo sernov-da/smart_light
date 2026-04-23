@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DeviceStatus {
+  connected
+  disconnected
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  name          String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  devices       Device[]
+  refreshTokens RefreshToken[]
+}
+
+model Device {
+  id            String        @id
+  name          String
+  ip            String
+  status        DeviceStatus  @default(disconnected)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  servo1Angle   Int?
+  servo2Angle   Int?
+  brightness    Int?
+  colorR        Int?
+  colorG        Int?
+  colorB        Int?
+  lastHeartbeat DateTime?
+  ownerId       String?
+  owner         User?         @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+}
