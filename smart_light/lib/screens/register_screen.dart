@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/fake_auth_service.dart';
+import '../services/auth_service.dart';
 import 'device_list_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -58,17 +58,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return null;
   }
 
-  void _onRegisterTap() {
+  Future<void> _onRegisterTap() async {
     final ok = _formKey.currentState?.validate() ?? false;
     if (!ok) return;
 
     FocusScope.of(context).unfocus();
 
-    final success = FakeAuthService.register(
-      name: _nameCtrl.text,
-      email: _emailCtrl.text,
-      password: _passCtrl.text,
-    );
+   final success = await AuthService.register(
+  _emailCtrl.text,
+  _passCtrl.text,
+);
 
     if (!success) {
       ScaffoldMessenger.of(context).showSnackBar(

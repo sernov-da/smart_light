@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/fake_auth_service.dart';
+import '../services/auth_service.dart';
 import 'device_list_screen.dart';
 import 'register_screen.dart';
 
@@ -42,15 +42,15 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  void _onLoginTap() {
+  Future<void> _onLoginTap() async {
     final ok = _formKey.currentState?.validate() ?? false;
     if (!ok) return;
 
     FocusScope.of(context).unfocus();
 
-    final success = FakeAuthService.login(
-      email: _emailCtrl.text,
-      password: _passCtrl.text,
+    final success = await AuthService.login(
+      _emailCtrl.text,
+      _passCtrl.text,
     );
 
     if (!success) {

@@ -8,10 +8,13 @@ export default defineEventHandler(async (event) => {
   const path = event.path || event.node?.req?.url || ''
 
   if (path.startsWith('/_')) return
-  if (path === '/' || path === '/health') return
+
+  // public routes
+  if (path === '/' || path.startsWith('/health')) return
   if (path.startsWith('/auth/register')) return
   if (path.startsWith('/auth/login')) return
   if (path.startsWith('/auth/refresh')) return
+
   if (path.startsWith('/_openapi.json')) return
   if (path.startsWith('/_scalar')) return
   if (path.startsWith('/_ws')) return
@@ -29,8 +32,8 @@ export default defineEventHandler(async (event) => {
 
   try {
     const payload = verifyAccessToken(token)
-    ;(event.context as any).user = payload // ну бля вроде правильно, надо будет через постман прогнать, посмотреть на запрос
-    //ну типо у меня объект http у него поле типа контекст, куда лезут любые данные, короче это как авторизация запроса, хз почему багается, почитать надо старые версии призмы и погонять через постман
+
+    ;(event.context as any).user = payload
   } catch {
     throw createError({
       statusCode: 401,

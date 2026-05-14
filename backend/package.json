@@ -15,6 +15,7 @@
     "h3": "1.15.4",
     "jsonwebtoken": "^9.0.3",
     "nitropack": "^2.12.9",
+    "nodemailer": "^8.0.7",
     "prisma": "^6.19.3",
     "zod": "^4.3.6"
   },

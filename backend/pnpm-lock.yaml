@@ -23,6 +23,9 @@ importers:
       nitropack:
         specifier: ^2.12.9
         version: 2.12.9(@electric-sql/pglite@0.4.1)(mysql2@3.15.3)
+      nodemailer:
+        specifier: ^8.0.7
+        version: 8.0.7
       prisma:
         specifier: ^6.19.3
         version: 6.19.3(magicast@0.5.1)
@@ -1382,6 +1385,10 @@ packages:
 
   node-mock-http@1.0.3:
     resolution: {integrity: sha512-jN8dK25fsfnMrVsEhluUTPkBFY+6ybu7jSB1n+ri/vOGjJxU8J9CZhpSGkHXSkFjtUhbmoncG/YG9ta5Ludqog==}
+
+  nodemailer@8.0.7:
+    resolution: {integrity: sha512-pkjE4mkBzQjdJT4/UmlKl3pX0rC9fZmjh7c6C9o7lv66Ac6w9WCnzPzhbPNxwZAzlF4mdq4CSWB5+FbK6FWCow==}
+    engines: {node: '>=6.0.0'}
 
   nopt@8.1.0:
     resolution: {integrity: sha512-ieGu42u/Qsa4TFktmaKEwM6MQH0pOWnaB3htzh0JRtx84+Mebc0cbZYN5bC+6WTZ4+77xrL9Pn5m7CV6VIkV7A==}
@@ -3181,6 +3188,8 @@ snapshots:
   node-gyp-build@4.8.4: {}
 
   node-mock-http@1.0.3: {}
+
+  nodemailer@8.0.7: {}
 
   nopt@8.1.0:
     dependencies:
